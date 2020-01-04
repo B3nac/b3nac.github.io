@@ -4,7 +4,7 @@
 @ul-background-color: #19786A;
 @active-background-color: #73AD21;
 @section-border-color: #73AD21;
-@article-background-color: #FFFFFF;
+@article-background-color: #F4BA67;
 @section-background-color: #FFFFFF;
 @footer-background-color: #777777;
 
@@ -51,6 +51,7 @@ ul {
 
 p {
   font-size: 18px;
+  padding-top: 4px;
 }
 
 h1 {
@@ -95,8 +96,9 @@ li a:hover:not(.active) {
 article {
   float: left;
   width: 100%;
+  padding: 10px;
   background-color: @article-background-color;
-  /*height: 1000px;*/
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.27);
 }
 
 section {

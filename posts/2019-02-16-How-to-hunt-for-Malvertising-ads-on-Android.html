@@ -1,19 +1,129 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html>
-<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
-<link rel="stylesheet" href="../index.css">
-
-<div class="header">
-  <a href="../index.html" class="logo">B3nac</a>
-  <div class="header-right">
-    <a href="../index.html">Home</a>
-    <a class="active" href="../blog.html">Blog</a>
-    <a href="../about.html">About</a>
-    <a href="../contact.html">Contact</a>
-  </div>
-</div>
-
-<div class="paragraph-center">
-    <title>How to Hunt for Malvertising Ads on Android</title><h2>How to hunt for Malvertising ads on Android</h2><p>This process was crafted after about 7 hours of trying different things in order to find malvertising ads. I was invited to a unique program and really wanted to find a valid submission because nobody had yet.</p><h3>Setting up the testing environment</h3><p>The testing environment had some requirements that were very unique. I couldn't use a proxy over wifi because the ads wouldn't pop-up otherwise only on the mobile network. I tried some local traffic capture apps and didn't have any luck with those either. Eventually I was successful with Android Dev-Tools with Chrome on desktop. Since I was on Android this turned out to be the best option.<p><h3>Steps needed on Android cell phone</h3><div class="paragraph-center"><ul><li>Enable USB Debugging</li><li>Turn off wifi</li><li>Open Chrome on Android</li><li>Go to Settings and select Site Settings</li><li>Set Javascript, Pop-ups and redirects, and Ads to allowed. Your settings should look like this screenshot.</li></ul></div><img src="/images/mobilesettingsforads.jpg" width=30%><h3>Steps needed on desktop with Chrome</h3><p>Usually when installing Android Studio on desktop DevTools will also be installed. DevTools will detect your device when it is plugged into the computer via usb, accept the prompt on Android that looks like this screenshot. <img src="/images/acceptprompt.jpg" width=30%></p></h3><p>Now open Chrome and hold Ctrl+Shift+I to open DevTools and click Discover USB devices.</p><p><img src="/images/opendevtools.png" width=80%></p></p><p>To find your device go to Network > Remote devices this is where you'll click on your phone in Chrome browser.</p><img src="/images/chromedetectingphone.png" width=80%><p>Next I will open Chrome on my Android device and the browser tab will be detected in the Remote Devices window.</p><img src="/images/detectedtab.png" width=80%><p>Click inspect on the tab you want DevTools to monitor. A window will open showing your phone screen and all requests made while loading the tab. This is also a handy way to check if there are different requests on mobile compared to a desktop website. As an example I used my website.</p><img src="/images/dev-tools-page-load.png" width=80%><h3>Target websites</h3><p>Because of the nondisclosure policy I can't say what websites I used this method on. The more ads that load through a bidding system the better. Attackers use this bidding system to sneak in their ads on websites. After you've found a website that loads a lot of ads you're in business.</p><h3>How the malvertising payload fires</h3><p>The malvertising ads work by winning a bid and using Polyglot images to hide malvertising attacks. The best way to try to intercept these Polyglot payloads is using DevTools and saving a log of requests. This way a HAR file can be saved and analyized after the payload fires.<h3>The Method for Capturing the Redirect</h3><div class="paragraph-center"><p><li>Click preserve log</li><p></div><img src="/images/clickpreservelog.png" width=80%><p><div class="paragraph-center"><ul class="z"></ul><li>Turn off wifi on Android phone.</li><li>Clear cookies and history.</li><li>Refresh page and scroll.</li><li>Browse another page.</li><li>Polyglot payload will fire with no user interaction on image load.</li></ul></div><p>The browsing needs to be as human as possible and not automated. This method worked for me every 5-8 minutes.</p><p></p><img src="/images/triggeredgoogleredirect.PNG" width=80%><p>More examples of malvertising ads</p><img src="/images/Costco-malicious-ad.jpg" width=40%><p>And another that targeted Google.<img src="/images/Google-malicous-ad.jpg" width=40%></p><p>It's interesting that the urls have a one use token for the ad unless you had the initial redirect link. Also all domains were .live or .online. Another technique they used was a countdown timer to try to make it seem like the victim needed to make a selection within that time frame. Nothing happened after the timer hit 0. Thirdly increasing rewards with every redirect page eventually leading to a Costco copycat website.</p><p>Once an ad is triggered right click on any of the requests and select "Save all as HAR with content". This will save a HAR file as "website.har". A HAR file is a json formatted file of all requests made in the browsing session.<p><img src="/images/saveHARfile.png" width=80%></p><h3>Further exploration</h3><p>I didn't just stop at getting an ad, naturally I wanted to know more my curiosity was at an all time high. This is where I get an adrenaline rush, when I'm digging deeper into an application or method. In this case it was a malvertising campaign.</p><p>After following the redirect I was presented with another page posing as a Reward Center. I downloaded the page and it was 4134 lines long, this in itself was interesting. Secondly the file extension was ".mhtml". After looking up the mhtml file format this makes total sense as to why this file format was chosen. The summary of a mhtml file is "a web page archive format used to combine, in a single computer file, the HTML code and its companion resources that are represented by external hyperlinks in the web page's HTML code".</p><p>I soon found out the hyperlinks for the redirects were in the Multipart Boundaries section of the Rewards Center source code.</p><img src="/images/MultipartBoundaries.png" width=90%><p>Fake comments were hardcoded into the page.</p><img src="/images/fakecomments.png" width=80%><p>Glypicons were being used, maybe for encoding the payload to prevent detection.</p><img src="/images/glyphicons.png" width=80%><p>Finally found the image data near the bottom of the file! Looks like some of the data is encoded by Glyphicons.</p><img src="/images/imagedata.png" width="80%"><p>I believe the payload polyglots are here but heavily obsfucated. One of the reasons is that Javascript comments are terminated with "*/" and It's in two of these images.</p><img src="/images/javacommentescape.png" width=90%><p>My goal is to decode these image payloads and have a part 2 to this blog post. I hope you enjoyed this write up as much as I enjoyed hunting for malvertising ads.</p><p>P.S. I'm currently looking for a job, if you like my work please reach out to me at <a href="mailto:b3nac.sec@gmail.com">b3nac.sec@gmail.com</a> or my <a href="https://www.linkedin.com/in/kyle-benac">LinkedIn</a>.</p><h3>Resources</h3><p><a href="https://developers.google.com/web/tools/chrome-devtools/remote-debugging/">https://developers.google.com/web/tools/chrome-devtools/remote-debugging/</a></p><p><a href="https://devcondetect.com/blog/2019/2/24/hacking-group-using-polyglot-images-to-hide-malvertsing-attacks">https://devcondetect.com/blog/2019/2/24/hacking-group-using-polyglot-images-to-hide-malvertsing-attacks</a></p></div>
-<html>
+<html lang="en">
+<head>
+	<title>Privacy Policy</title>
+	<meta charset="utf-8">
+	<meta name="description" content="B3nac Spear Texting Write Up">
+	<meta name="keywords" content="Android, pentest, Spear Texting, Android ">
+	<meta name="copyright" content="B3nac">
+	<meta name="robots" content="index,follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+	<link rel="stylesheet/less" type="text/css" href="../css/styles.less" />
+	<link rel="icon" href="images/favicon.png" type="image/png" sizes="16x16">
+	<script src="../js/less.min.js" ></script>
+</head>
+<body>
+	<div id="main">
+		<div class="navbar">
+			<a class="active" href="../index.html">Home</a>
+			<div class="dropdown">
+				<button class="dropbtn">Projects
+					<i class="fa fa-caret-down"></i>
+				</button>
+				<div class="dropdown-content">
+					<a href="https://github.com/B3nac/Android-Reports-and-Resources">Android Reports and Resources</a>
+					<a href="https://github.com/B3nac/InjuredAndroid">InjuredAndroid</a>
+					<a href="https://github.com/B3nac/bXSSRequest">bXSSRequest</a>
+					<a href="../training.html">Training</a>
+				</div>
+			</div>
+			<a href="../blog.html">Blog</a>
+			<a href="https://b3nac.itch.io">Game Development</a>
+			<a href="../about.html">About</a>
+			<a href="../contact.html">Contact</a>
+		</div>
+		<title>How to Hunt for Malvertising Ads on Android</title>
+		<section>
+		<h2>How to hunt for Malvertising ads on Android</h2>
+		<p>This process was crafted after about 7 hours of trying different things in order to find malvertising ads. I was invited to a unique program and really wanted to find a valid submission because nobody had yet.</p>
+		<h3>Setting up the testing environment</h3>
+		<p>The testing environment had some requirements that were very unique. I couldn't use a proxy over wifi because the ads wouldn't pop-up otherwise only on the mobile network. I tried some local traffic capture apps and didn't have any luck with those either. Eventually I was successful with Android Dev-Tools with Chrome on desktop. Since I was on Android this turned out to be the best option.<p>
+			<h3>Steps needed on Android cell phone</h3>
+				<li>Enable USB Debugging</li><br>
+				<li>Turn off wifi</li><br>
+				<li>Open Chrome on Android</li><br>
+				<li>Go to Settings and select Site Settings</li><br>
+				<li>Set Javascript, Pop-ups and redirects, and Ads to allowed. Your settings should look like this screenshot.</li><br>
+			<p>&nbsp</p>
+			<img src="/images/mobilesettingsforads.jpg" width=20%>
+			<h3>Steps needed on desktop with Chrome</h3>
+			<p>Usually when installing Android Studio on desktop DevTools will also be installed. DevTools will detect your device when it is plugged into the computer via usb, accept the prompt on Android that looks like this screenshot.</p>
+			<img src="/images/acceptprompt.jpg" width=20%>
+			<p>Now open Chrome and hold Ctrl+Shift+I to open DevTools and click Discover USB devices.</p>
+			<img src="/images/opendevtools.png" width=40%>
+			<p>To find your device go to Network > Remote devices this is where you'll click on your phone in Chrome browser.</p>
+			<img src="/images/chromedetectingphone.png" width=40%>
+			<p>Next I will open Chrome on my Android device and the browser tab will be detected in the Remote Devices window.</p>
+			<img src="/images/detectedtab.png" width=40%>
+			<p>Click inspect on the tab you want DevTools to monitor. A window will open showing your phone screen and all requests made while loading the tab. This is also a handy way to check if there are different requests on mobile compared to a desktop website. As an example I used my website.</p>
+			<img src="/images/dev-tools-page-load.png" width=40%>
+			<h3>Target websites</h3>
+			<p>Because of the nondisclosure policy I can't say what websites I used this method on. The more ads that load through a bidding system the better. Attackers use this bidding system to sneak in their ads on websites. After you've found a website that loads a lot of ads you're in business.</p>
+			<h3>How the malvertising payload fires</h3>
+			<p>The malvertising ads work by winning a bid and using Polyglot images to hide malvertising attacks. The best way to try to intercept these Polyglot payloads is using DevTools and saving a log of requests. This way a HAR file can be saved and analyized after the payload fires.<p>
+				<h3>The Method for Capturing the Redirect</h3>
+				<li>Click preserve log&nbsp&nbsp&nbsp&nbsp</li>
+				<img src="/images/clickpreservelog.png" width=30%>
+				<p>&nbsp</p>
+				<li>Turn off wifi on Android phone.</li><br>
+				<li>Clear cookies and history.</li><br>
+				<li>Refresh page and scroll.</li><br>
+				<li>Browse another page.</li><br>
+				<li>Polyglot payload will fire with no user interaction on image load.</li><br>
+			<p>The browsing needs to be as human as possible and not automated. This method worked for me every 5-8 minutes.</p>
+			<img src="/images/triggeredgoogleredirect.PNG" width=30%>
+			<p>More examples of malvertising ads</p>
+			<img src="/images/Costco-malicious-ad.jpg" width=20%>
+			<p>And another that targeted Google.<p>
+			<img src="/images/Google-malicous-ad.jpg" width=20%>
+			<p>It's interesting that the urls have a one use token for the ad unless you had the initial redirect link. Also all domains were .live or .online. Another technique they used was a countdown timer to try to make it seem like the victim needed to make a selection within that time frame. Nothing happened after the timer hit 0. Thirdly increasing rewards with every redirect page eventually leading to a Costco copycat website.</p>
+			<p>Once an ad is triggered right click on any of the requests and select "Save all as HAR with content". This will save a HAR file as "website.har". A HAR file is a json formatted file of all requests made in the browsing session.<p>
+				<img src="/images/saveHARfile.png" width=40%>
+				<h3>Further exploration</h3>
+				<p>I didn't just stop at getting an ad, naturally I wanted to know more my curiosity was at an all time high. This is where I get an adrenaline rush, when I'm digging deeper into an application or method. In this case it was a malvertising campaign.</p>
+				<p>After following the redirect I was presented with another page posing as a Reward Center. I downloaded the page and it was 4134 lines long, this in itself was interesting. Secondly the file extension was ".mhtml". After looking up the mhtml file format this makes total sense as to why this file format was chosen. The summary of a mhtml file is "a web page archive format used to combine, in a single computer file, the HTML code and its companion resources that are represented by external hyperlinks in the web page's HTML code".</p>
+				<p>I soon found out the hyperlinks for the redirects were in the Multipart Boundaries section of the Rewards Center source code.</p>
+				<img src="/images/MultipartBoundaries.png" width=40%>
+				<p>Fake comments were hardcoded into the page.</p><img src="/images/fakecomments.png" width=40%>
+				<p>Glypicons were being used, maybe for encoding the payload to prevent detection.</p>
+				<img src="/images/glyphicons.png" width=40%><p>Finally found the image data near the bottom of the file! Looks like some of the data is encoded by Glyphicons.</p>
+				<img src="/images/imagedata.png" width="40%">
+				<p>I believe the payload polyglots are here but heavily obsfucated. One of the reasons is that Javascript comments are terminated with "*/" and It's in two of these images.</p>
+				<img src="/images/javacommentescape.png" width=80%>
+				<p>My goal is to decode these image payloads and have a part 2 to this blog post. I hope you enjoyed this write up as much as I enjoyed hunting for malvertising ads.</p>
+				<p>P.S. I'm currently looking for a job, if you like my work please reach out to me at <a href="mailto:b3nac.sec@gmail.com">b3nac.sec@gmail.com</a> or my <a href="https://www.linkedin.com/in/kyle-benac">LinkedIn</a>.</p>
+				<h3>Resources</h3>
+				<p><a href="https://developers.google.com/web/tools/chrome-devtools/remote-debugging/">https://developers.google.com/web/tools/chrome-devtools/remote-debugging/</a></p>
+				<p><a href="https://devcondetect.com/blog/2019/2/24/hacking-group-using-polyglot-images-to-hide-malvertsing-attacks">https://devcondetect.com/blog/2019/2/24/hacking-group-using-polyglot-images-to-hide-malvertsing-attacks</a></p>
+			</section>
+				<footer>
+					<fieldset>
+						<legend>Newsletter Signup</legend>
+						<div class="clearfix">
+							<div class="alignsubscribe">
+								<br>
+								<form action="mailto:b3nac.sec@gmail.com" method="get">
+									<label for="email">Subscribe to stay up to date with my latest blog posts!</label>
+									<input id="email" name="email" type="email" />
+									<button type="submit">Subscribe</button>
+								</form>
+							</div>
+							<div class="alignsubscribe" id="linkcolumn">
+								<a href="../privacypolicy.html">Privacy Policy</a>
+								<a href="../sitemap.xml">Site Map</a>
+								<a href="#main">Back to Top</a>
+								<a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+								<p>Copyright © 2020 B3nac</p>
+							</div>
+							<div class="alignsocial">
+								<a href="https://bugcrowd.com/B3nac_Sec"><img src="../images/bugcrowd.png"></a>
+								<a href="https://github.com/B3nac"><img src="../images/github.png" alt="Github"></a>
+								<a href="https://twitter.com/b3nac"><img src="../images/twitter.png"></a>
+								<a href="https://www.linkedin.com/in/kyle-benac"><img src="../images/linkedin.ico" alt="Linkedin"></a>
+								<a href="https://hackerone.com/b3nac"><img src="../images/h1.png"></a>
+							</div>
+						</div>
+					</fieldset>
+				</footer>
+				<html>
