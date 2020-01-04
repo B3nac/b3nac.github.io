@@ -97,33 +97,37 @@ newsletter_signup=pocheaderinjection@gmail.com&newsletter_placement=footer<br>
   <p>This vulnerability could send the replaced links in the email content to any recipient of the Starbucks mail server.<h3>Conclusion</h3><p>The bounty from this bug was $150 and at the time I was very happy with that. However after doing bug bounties for almost 2 years, I think this vulnerability would have cost Starbucks a significant amount in damage control if exploited. One of the easiest ways to esculate privileges is to phish an employee on the internal network. Quoted from The Hacker Playbook 3 "We all know that spear phishing is still one of the more successful avenues of attack. If we don't have any vulnerabilities from the outside, attacking users is the next step."Starbucks intitially fixed this vulnerability by disconnecting the newsletter sign up function. Later I found out this was a case of email link poisoning except via the referrer attribute instead of the host. Example with host header here <a href="https://hackerone.com/reports/182670">https://hackerone.com/reports/182670</a>. The moral of the story is to never give up no matter how many people are also hunting on the same bug bounty target. Think outside of the box, be creative, and have fun. My Hackerone report of this bug <a href="https://hackerone.com/reports/229498">https://hackerone.com/reports/229498</a></p>
 </div>
 </section>
-<footer>
-          <fieldset>
-            <legend>Newsletter Signup</legend>
-            <div class="clearfix">
-              <div class="alignsubscribe">
-                <br>
-                <form action="mailto:b3nac.sec@gmail.com" method="get">
-                  <label for="email">Subscribe to stay up to date with my latest blog posts!</label>
-                  <input id="email" name="email" type="email" />
-                  <button type="submit">Subscribe</button>
-                </form>
-              </div>
-              <div class="alignsubscribe" id="linkcolumn">
-                <a href="../privacypolicy.html">Privacy Policy</a>
-                <a href="../sitemap.xml">Site Map</a>
-                <a href="#main">Back to Top</a>
-                <a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
-                <p>Copyright © 2020 B3nac</p>
-              </div>
-              <div class="alignsocial">
-                <a href="https://bugcrowd.com/B3nac_Sec"><img src="../images/bugcrowd.png"></a>
-                <a href="https://github.com/B3nac"><img src="../images/github.png" alt="Github"></a>
-                <a href="https://twitter.com/b3nac"><img src="../images/twitter.png"></a>
-                <a href="https://www.linkedin.com/in/kyle-benac"><img src="../images/linkedin.ico" alt="Linkedin"></a>
-                <a href="https://hackerone.com/b3nac"><img src="../images/h1.png"></a>
-              </div>
-            </div>
-          </fieldset>
-        </footer>
+  <footer>
+    <fieldset>
+      <legend>Newsletter Signup</legend>
+      <div class="clearfix">
+        <div class="alignsubscribe">
+<div id="mc_embed_signup">
+  <form action="https://b3nac.us4.list-manage.com/subscribe/post?u=9bcf012eb1eed18322745a537&amp;id=595bad0e70" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+      <label for="mce-EMAIL">Subscribe to get notified about my latest blog posts! </label>
+      <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9bcf012eb1eed18322745a537_595bad0e70" tabindex="-1" value=""></div>
+      <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+  </form>
+</div>
+</div>
+<div class="alignsubscribe" id="linkcolumn">
+  <a href="privacypolicy.html">Privacy Policy</a>
+  <a href="sitemap.xml">Site Map</a>
+  <a href="#main">Back to Top</a>
+  <a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+  <p>Copyright © 2020 B3nac</p>
+</div>
+<div class="alignsocial">
+  <a href="https://bugcrowd.com/B3nac_Sec"><img src="/images/bugcrowd.png"></a>
+  <a href="https://github.com/B3nac"><img src="images/github.png" alt="Github"></a>
+  <a href="https://twitter.com/b3nac"><img src="/images/twitter.png"></a>
+  <a href="https://www.linkedin.com/in/kyle-benac"><img src="images/linkedin.ico" alt="Linkedin"></a>
+  <a href="https://hackerone.com/b3nac"><img src="/images/h1.png"></a>
+</div>
+</div>
+</fieldset>
+</footer>
 </html>
