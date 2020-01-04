@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Privacy Policy</title>
+  <title>How I could have launched a spear phishing campaign with Starbucks newsletter signup</title>
   <meta charset="utf-8">
-  <meta name="description" content="B3nac Spear Texting Write Up">
-  <meta name="keywords" content="Android, pentest, Spear Texting, Android ">
+  <meta name="description" content="B3nac Spear Phishing Write Up">
+  <meta name="keywords" content="Android, pentest, Spear Phishing, Email, Starbucks ">
   <meta name="copyright" content="B3nac">
   <meta name="robots" content="index,follow" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,7 +34,6 @@
       <a href="../contact.html">Contact</a>
     </div>
 <section>
-<title>How I could have launched a spear phishing campaign with Starbucks newsletter signup</title>
 <h2>How I could have launched a spear phishing campaign with Starbucks newsletter signup</h2>
 <p>Please note that no spear phishing actually took place in the reporting of this bug. Nor do I have plans to launch a spear phishing campaign in the future. The title demonstrates the worst possible scenario. :)</p><h3>Overcoming "All the bugs have been found" mindset.</h3><p>One of the biggest mental blocks that prevents new bug hunters from exploring big company's bug bounty programs is thinking that everyone has already found all the vulnerabilies. This is not the case because the foundation of the company's code base is ever evolving. It is true that all the "low hanging fruit" have probably been found, but with creativity there's a good chance your report will be the first.</p><h3>Initial recon</h3><p>So there I was as a bug bounty rookie on the frontpage of Starbucks. Pondering "What has nobody tested yet?" Staring me right in the face was the answer, the newsletter signup.</p><img src="/images/starbucks-newsletter-signup.JPG" width="40%"><p>The current signup in the image is slightly different than the one I tested. There was only an email attribute and no zip code. Using Firefox developer tools I started inspecting the POST request that was sent while signing up, I wasn't using Burp Suite too much at that time. Now that I had the following POST request I could start thinking of possible attack vectors.</p>
 <article>

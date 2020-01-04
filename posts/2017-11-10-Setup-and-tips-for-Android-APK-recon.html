@@ -1,19 +1,115 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html>
-<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
-<link rel="stylesheet" href="../index.css">
-
-<div class="header">
-  <a href="../index.html" class="logo">B3nac</a>
-  <div class="header-right">
-    <a href="../index.html">Home</a>
-    <a class="active" href="../blog.html">Blog</a>
-    <a href="../about.html">About</a>
-    <a href="../contact.html">Contact</a>
-  </div>
-</div>
-
-<div class="paragraph-center"><title>Setup and tips for Android APK recon</title><h2>Setup and tips for Android APK recon</h2><h3>What is an .apk?</h3><p>Android Package Kit a.k.a packaged version of an Android application. This is what we'll be stripping down like we are working at a strip club.</p><h3>ADB</h3><p>ADB or Android Debug Bridge will be your new best friend, girlfriend, and wife in regards to Android testing. This is the tool we will use in order to pull .apks install apks etc.<p>To install ADB you'll need to install Android Studio or alternatively install just platform-tools with the Andriod SDK if you don't want the Android Studio IDE. Testing is multiplaform with all the tools I'll be covering in this write-up. The next step is adding ADB to your path. For windows go to evironment variables and add your path to platform tools to the PATH user variable.<img src="/images/Environvar.JPG"><p>A win 10 example of the path:</p><p>C:\Users\B3nac\AppData\Local\Android\sdk\platform-tools\</p><p>Exporting the path to Linux ~/.bashrc example incase "sudo apt-get install adb" didn't add it automatically:</p><p>export PATH=$PATH{}:/path/to/android/platform-tools</p><p>After adding adb to your path make sure it's working correctly by using the following command.</p><p>adb version</p><p>You should get a response simular to.</p><img src="/images/adbversion.JPG"><p>Now that adb is setup we'll move onto adb commands. First you'll need to connect your Android test phone via usb cable and enable debugging under the phone settings "Settings/System/Developer Options/USB debugging". After debugging is enabled Android Debugging Bridge can work its magic.</p> <p>The first command we will run is "adb shell pm list packages" this lists all the .apks listed on the phone.</p><img src="/images/listpackages.JPG"><p>Once we have the name of the .apk we want, then we can get the path information with "adb shell pm path com.nameofapk"</p><img src="/images/path.JPG"><p>Now we can pull the .apk onto our PC so we can reverse engineer it. "adb pull /data/app/io.github.b3nac.poc-2/base.apk" >:]</p><img src="/images/pulled.JPG"><p>It's time to bust out the handy dandy jadx tool. I'm using jadx with a gui for the nifty search function it has. There are many other tools you can use to reverse engineer. I'll go in depth on more tools in future posts.</p><p>Setting up jadx is as simple as: </p><img src="/images/jadxbuildinstruct.JPG" width=80%><p>Gradle comes with android studio making it easy to install jadx. Now lets open the base.apk. I usually rename them or else the previous one gets overwritten if you pull another apk to the same directory.</p><img src="/images/jadx-openfile.JPG" width=80%><p>After it decompiles jadx lists all of the packages and resources. This particular apk doesn't have a lot going on because it was a poc.</p><img src="/images/jadxdecompiledapk.JPG"><p>The first file you are going to want to look at is the manifest. The android manifest lists all the inner workings, permission levels, activities, broadcasts. This is where you'll want to check for unsafe "exported" activities, broadcasts, "debuggable=true", "backup=true". If a android application in in production with "backup=true" or "debuggable=true" that needs to be changed to false like yesturday. The android manifest is a gold mine of information for researchers because it is a roadmap to how the android app works. The manifest will be under Resources/AndroidManifest.xml</p><img src="/images/debugtrue.JPG" width=90%><p>Besides the manifest, what was once a closed source program is now open source. I have looked for key functions that are vulnerable because sometimes you'll find insecure implimentations. For example if you find "MODE_WORLD_READABLE" or "MODE_WORLD_WRITEABLE" for storage use. An important function of jadx is the search function which is the wand up in the top left <img src="/images/searchfunction.JPG"><img src="/images/search.JPG" width=90%></p><p>Once again there's not a lot to this apk but you can end up finding keys, plaintext passwords and all kinds of good stuff.</p><p>I used this same method when I found the vulnerability in this report. <a href="https://hackerone.com/reports/289000">https://hackerone.com/reports/289000</a></a></p><p>In conclusion I hope you enjoyed learning about how to reverse engineer a Android application for recon purposes. I will go more in depth on several functionalities in the future. Like WebViews, Activities, Broadcast Recievers, and Intents. Happy hacking everyone!<p>Resources</p><p><a href="https://developer.android.com/studio/install.html">https://developer.android.com/studio/install.html</a></p><p><a href="https://developer.android.com/studio/index.html#downloads">https://developer.android.com/studio/index.html#downloads</a></p><p><a href="https://github.com/skylot/jadx">https://github.com/skylot/jadx</a></p><p><a href="https://hackerone.com/reports/289000">https://hackerone.com/reports/289000</a></p>
-
-</html>
+<html lang="en">
+<head>
+	<title>Setup and tips for Android APK recon</title>
+	<meta charset="utf-8">
+	<meta name="description" content="B3nac Setup tips for Android APK recon Write Up">
+	<meta name="keywords" content="Android, pentest, Setup tips, Android APK Recon">
+	<meta name="copyright" content="B3nac">
+	<meta name="robots" content="index,follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+	<link rel="stylesheet/less" type="text/css" href="../css/styles.less" />
+	<link rel="icon" href="images/favicon.png" type="image/png" sizes="16x16">
+	<script src="../js/less.min.js" ></script>
+</head>
+<body>
+	<div id="main">
+		<div class="navbar">
+			<a class="active" href="../index.html">Home</a>
+			<div class="dropdown">
+				<button class="dropbtn">Projects
+					<i class="fa fa-caret-down"></i>
+				</button>
+				<div class="dropdown-content">
+					<a href="https://github.com/B3nac/Android-Reports-and-Resources">Android Reports and Resources</a>
+					<a href="https://github.com/B3nac/InjuredAndroid">InjuredAndroid</a>
+					<a href="https://github.com/B3nac/bXSSRequest">bXSSRequest</a>
+					<a href="../training.html">Training</a>
+				</div>
+			</div>
+			<a href="../blog.html">Blog</a>
+			<a href="https://b3nac.itch.io">Game Development</a>
+			<a href="../about.html">About</a>
+			<a href="../contact.html">Contact</a>
+		</div>
+		<section>
+			<h2>Setup and tips for Android APK recon</h2>
+			<h3>What is an .apk?</h3>
+			<p>Android Package Kit a.k.a packaged version of an Android application. This is what we'll be stripping down like we are working at a strip club.</p>
+			<h3>ADB</h3>
+			<p>ADB or Android Debug Bridge will be your new best friend, girlfriend, and wife in regards to Android testing. This is the tool we will use in order to pull .apks install apks etc.</p>
+			<p>To install ADB you'll need to install Android Studio or alternatively install just platform-tools with the Andriod SDK if you don't want the Android Studio IDE. Testing is multiplaform with all the tools I'll be covering in this write-up. The next step is adding ADB to your path. For windows go to evironment variables and add your path to platform tools to the PATH user variable.<img src="/images/Environvar.JPG">
+				<p>A win 10 example of the path:</p>
+				<article>
+					<p>C:\Users\B3nac\AppData\Local\Android\sdk\platform-tools\</p>
+				</article>
+				<p>&nbsp</p>
+				<p>Exporting the path to Linux ~/.bashrc example incase "sudo apt-get install adb" didn't add it automatically:</p>
+				<article>
+					<p>export PATH=$PATH{}:/path/to/android/platform-tools</p>
+				</article>
+				<p>&nbsp</p>
+				<p>After adding adb to your path make sure it's working correctly by using the following command.</p>
+				<article>
+					<p>adb version</p>
+				</article>
+				<p>&nbsp</p>
+				<p>You should get a response simular to.</p>
+				<img src="/images/adbversion.JPG">
+				<p>Now that adb is setup we'll move onto adb commands. First you'll need to connect your Android test phone via usb cable and enable debugging under the phone settings "Settings/System/Developer Options/USB debugging". After debugging is enabled Android Debugging Bridge can work its magic.</p>
+				<p>The first command we will run is "adb shell pm list packages" this lists all the .apks listed on the phone.</p>
+				<img src="/images/listpackages.JPG">
+				<p>Once we have the name of the .apk we want, then we can get the path information with "adb shell pm path com.nameofapk"</p>
+				<img src="/images/path.JPG">
+				<p>Now we can pull the .apk onto our PC so we can reverse engineer it. "adb pull /data/app/io.github.b3nac.poc-2/base.apk" >:]</p>
+				<img src="/images/pulled.JPG">
+				<p>It's time to bust out the handy dandy jadx tool. I'm using jadx with a gui for the nifty search function it has. There are many other tools you can use to reverse engineer. I'll go in depth on more tools in future posts.</p>
+				<p>Setting up jadx is as simple as: </p>
+				<img src="/images/jadxbuildinstruct.JPG" width=80%>
+				<p>Gradle comes with android studio making it easy to install jadx. Now lets open the base.apk. I usually rename them or else the previous one gets overwritten if you pull another apk to the same directory.</p>
+				<img src="/images/jadx-openfile.JPG" width=80%>
+				<p>After it decompiles jadx lists all of the packages and resources. This particular apk doesn't have a lot going on because it was a poc.</p>
+				<img src="/images/jadxdecompiledapk.JPG">
+				<p>The first file you are going to want to look at is the manifest. The android manifest lists all the inner workings, permission levels, activities, broadcasts. This is where you'll want to check for unsafe "exported" activities, broadcasts, "debuggable=true", "backup=true". If a android application in in production with "backup=true" or "debuggable=true" that needs to be changed to false like yesturday. The android manifest is a gold mine of information for researchers because it is a roadmap to how the android app works. The manifest will be under Resources/AndroidManifest.xml</p>
+				<img src="/images/debugtrue.JPG" width=90%>
+				<p>Besides the manifest, what was once a closed source program is now open source. I have looked for key functions that are vulnerable because sometimes you'll find insecure implimentations. For example if you find "MODE_WORLD_READABLE" or "MODE_WORLD_WRITEABLE" for storage use. An important function of jadx is the search function which is the wand up in the top left <img src="/images/searchfunction.JPG"><img src="/images/search.JPG" width=90%></p>
+				<p>Once again there's not a lot to this apk but you can end up finding keys, plaintext passwords and all kinds of good stuff.</p>
+				<p>I used this same method when I found the vulnerability in this report. <a href="https://hackerone.com/reports/289000">https://hackerone.com/reports/289000</a></p>
+				<p>In conclusion I hope you enjoyed learning about how to reverse engineer a Android application for recon purposes. I will go more in depth on several functionalities in the future. Like WebViews, Activities, Broadcast Recievers, and Intents. Happy hacking everyone!
+					<p>Resources</p>
+					<a href="https://developer.android.com/studio/install.html">https://developer.android.com/studio/install.html</a><br>
+					<a href="https://developer.android.com/studio/index.html#downloads">https://developer.android.com/studio/index.html#downloads</a><br>
+					<a href="https://github.com/skylot/jadx">https://github.com/skylot/jadx</a><br>
+					<a href="https://hackerone.com/reports/289000">https://hackerone.com/reports/289000</a><br>
+				</section>
+				<footer>
+					<fieldset>
+						<legend>Newsletter Signup</legend>
+						<div class="clearfix">
+							<div class="alignsubscribe">
+								<br>
+								<form action="mailto:b3nac.sec@gmail.com" method="get">
+									<label for="email">Subscribe to stay up to date with my latest blog posts!</label>
+									<input id="email" name="email" type="email" />
+									<button type="submit">Subscribe</button>
+								</form>
+							</div>
+							<div class="alignsubscribe" id="linkcolumn">
+								<a href="../privacypolicy.html">Privacy Policy</a>
+								<a href="../sitemap.xml">Site Map</a>
+								<a href="#main">Back to Top</a>
+								<a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+								<p>Copyright © 2020 B3nac</p>
+							</div>
+							<div class="alignsocial">
+								<a href="https://bugcrowd.com/B3nac_Sec"><img src="../images/bugcrowd.png"></a>
+								<a href="https://github.com/B3nac"><img src="../images/github.png" alt="Github"></a>
+								<a href="https://twitter.com/b3nac"><img src="../images/twitter.png"></a>
+								<a href="https://www.linkedin.com/in/kyle-benac"><img src="../images/linkedin.ico" alt="Linkedin"></a>
+								<a href="https://hackerone.com/b3nac"><img src="../images/h1.png"></a>
+							</div>
+						</div>
+					</fieldset>
+				</footer>
+				</html>
