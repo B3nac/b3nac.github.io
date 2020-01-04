@@ -1,69 +1,130 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html>
-<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
-<link rel="stylesheet" href="../index.css">
-
-<div class="header">
-  <a href="../index.html" class="logo">B3nac</a>
-  <div class="header-right">
-    <a href="../index.html">Home</a>
-    <a class="active" href="../blog.html">Blog</a>
-    <a href="../about.html">About</a>
-    <a href="../contact.html">Contact</a>
-  </div>
-</div>
-
-<div class="paragraph-center">
-  <title>How I could have launched a spear phishing campaign with Starbucks newsletter signup</title><h2>How I could have launched a spear phishing campaign with Starbucks newsletter signup</h2>
-<p>Please note that no spear phishing actually took place in the reporting of this bug. Nor do I have plans to launch a spear phishing campaign in the future. The title demonstrates the worst possible scenario. :)</p><h3>Overcoming "All the bugs have been found" mindset.</h3><p>One of the biggest mental blocks that prevents new bug hunters from exploring big company's bug bounty programs is thinking that everyone has already found all the vulnerabilies. This is not the case because the foundation of the company's code base is ever evolving. It is true that all the "low hanging fruit" have probably been found, but with creativity there's a good chance your report will be the first.</p><h3>Initial recon</h3><p>So there I was as a bug bounty rookie on the frontpage of Starbucks. Pondering "What has nobody tested yet?" Staring me right in the face was the answer, the newsletter signup.</p><img src="/images/starbucks-newsletter-signup.JPG" width="80%"><p>The current signup in the image is slightly different than the one I tested. There was only an email attribute and no zip code. Using Firefox developer tools I started inspecting the POST request that was sent while signing up, I wasn't using Burp Suite too much at that time. Now that I had the following POST request I could start thinking of possible attack vectors.</p><div class="p"><p class="active">
-Host: rewards.www.starbucks.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0
-Accept: */*
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br
-Referer: https://www.starbucks.com/
-X-NewRelic-ID: VQUHVlNSARACV1JSBAIGVA==
-Content-Type: application/x-www-form-urlencoded; charset=UTF-8
-X-Requested-With: XMLHttpRequest
-Content-Length: 66
-Cookie: ███████
-Connection: keep-alive
-Pragma: no-cache
-Cache-Control: no-cache
+<html lang="en">
+<head>
+  <title>Privacy Policy</title>
+  <meta charset="utf-8">
+  <meta name="description" content="B3nac Spear Texting Write Up">
+  <meta name="keywords" content="Android, pentest, Spear Texting, Android ">
+  <meta name="copyright" content="B3nac">
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+  <link rel="stylesheet/less" type="text/css" href="../css/styles.less" />
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="16x16">
+  <script src="../js/less.min.js" ></script>
+</head>
+<body>
+  <div id="main">
+    <div class="navbar">
+      <a class="active" href="../index.html">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">Projects
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="https://github.com/B3nac/Android-Reports-and-Resources">Android Reports and Resources</a>
+          <a href="https://github.com/B3nac/InjuredAndroid">InjuredAndroid</a>
+          <a href="https://github.com/B3nac/bXSSRequest">bXSSRequest</a>
+          <a href="../training.html">Training</a>
+        </div>
+      </div>
+      <a href="../blog.html">Blog</a>
+      <a href="https://b3nac.itch.io">Game Development</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+    </div>
+<section>
+<title>How I could have launched a spear phishing campaign with Starbucks newsletter signup</title>
+<h2>How I could have launched a spear phishing campaign with Starbucks newsletter signup</h2>
+<p>Please note that no spear phishing actually took place in the reporting of this bug. Nor do I have plans to launch a spear phishing campaign in the future. The title demonstrates the worst possible scenario. :)</p><h3>Overcoming "All the bugs have been found" mindset.</h3><p>One of the biggest mental blocks that prevents new bug hunters from exploring big company's bug bounty programs is thinking that everyone has already found all the vulnerabilies. This is not the case because the foundation of the company's code base is ever evolving. It is true that all the "low hanging fruit" have probably been found, but with creativity there's a good chance your report will be the first.</p><h3>Initial recon</h3><p>So there I was as a bug bounty rookie on the frontpage of Starbucks. Pondering "What has nobody tested yet?" Staring me right in the face was the answer, the newsletter signup.</p><img src="/images/starbucks-newsletter-signup.JPG" width="40%"><p>The current signup in the image is slightly different than the one I tested. There was only an email attribute and no zip code. Using Firefox developer tools I started inspecting the POST request that was sent while signing up, I wasn't using Burp Suite too much at that time. Now that I had the following POST request I could start thinking of possible attack vectors.</p>
+<article>
+Host: rewards.www.starbucks.com<br>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0<br>
+Accept: */*<br>
+Accept-Language: en-US,en;q=0.5<br>
+Accept-Encoding: gzip, deflate, br<br>
+Referer: https://www.starbucks.com/<br>
+X-NewRelic-ID: VQUHVlNSARACV1JSBAIGVA==<br>
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8<br>
+X-Requested-With: XMLHttpRequest<br>
+Content-Length: 66<br>
+Cookie: ███████<br>
+Connection: keep-alive<br>
+Pragma: no-cache<br>
+Cache-Control: no-cache<br>
 
 newsletter_signup=pocheaderinjection@gmail.com&newsletter_placement=footer
-</p></div><h3>Thinking outside of the box</h3><p>During this time frame I was tinkering with Host Header Injection. This vulnerability usually isn't a very high threat unless tokens or credentials can be leaked outside of the websites domain via POST request. Even then a valid proof of concept needed to be provided showing the interception of the sensitive information.</p><p>I decided to try and change the links in the newsletter email to my own via the referrer header attribute.</p><p>The result was the following modified POST request:</p><div class="p"><p class="active">
-Host: rewards.www.starbucks.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0
-Accept: */*
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br
-Referer: https://r1otnetsec.herokuapp.com/
-X-NewRelic-ID: VQUHVlNSARACV1JSBAIGVA==
-Content-Type: application/x-www-form-urlencoded; charset=UTF-8
-X-Requested-With: XMLHttpRequest
-Content-Length: 66
-Cookie: ███████
-Connection: keep-alive
-Pragma: no-cache
-Cache-Control: no-cache
+</article>
+<p>&nbsp</p>
+<h3>Thinking outside of the box</h3>
+<p>During this time frame I was tinkering with Host Header Injection. This vulnerability usually isn't a very high threat unless tokens or credentials can be leaked outside of the websites domain via POST request. Even then a valid proof of concept needed to be provided showing the interception of the sensitive information.</p><p>I decided to try and change the links in the newsletter email to my own via the referrer header attribute.</p><p>The result was the following modified POST request:</p>
+<article>
+Host: rewards.www.starbucks.com<br>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0<br>
+Accept: */*<br>
+Accept-Language: en-US,en;q=0.5<br>
+Accept-Encoding: gzip, deflate, br<br>
+Referer: https://r1otnetsec.herokuapp.com/<br>
+X-NewRelic-ID: VQUHVlNSARACV1JSBAIGVA==<br>
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8<br>
+X-Requested-With: XMLHttpRequest<br>
+Content-Length: 66<br>
+Cookie: ███████<br>
+Connection: keep-alive<br>
+Pragma: no-cache<br>
+Cache-Control: no-cache<br>
 
 newsletter_signup=pocheaderinjection@gmail.com&newsletter_placement=footer
-<div></p><p>Result:</p><div class="p"><p class="active">
-Cache-Control: private
-Content-Type: application/json; charset=utf-8
-Server: Microsoft-IIS/7.5
-p3p: CP="CAO PSA OUR"
-Set-Cookie: ASP.NET_SessionId=███████; domain=.starbucks.com; path=/; secure; HttpOnly
-x-newrelic-app-data: 
-X-Powered-By: ASP.NET
-x-frame-options: SAMEORIGIN
-Date: Thu, 18 May 2017 02:53:52 GMT
-Content-Length: 457
-Via: 1.1 sjc1-10
-newsletter_signup=pocheaderinjection@gmail.com&newsletter_placement=footer</div></p><p>I recieved a 200 OK response from the server. The email I recieved from Starbucks validated the vulnerability via the screenshot below.
-  <img src="/images/starbucks-links-replaced.png" width="90%"> 
-  This vulnerability could send the replaced links in the email content to any recipient of the Starbucks mail server.<h3>Conclusion</h3><p>The bounty from this bug was $150 and at the time I was very happy with that. However after doing bug bounties for almost 2 years, I think this vulnerability would have cost Starbucks a significant amount in damage control if exploited. One of the easiest ways to esculate privileges is to phish an employee on the internal network. Quoted from The Hacker Playbook 3 "We all know that spear phishing is still one of the more successful avenues of attack. If we don't have any vulnerabilities from the outside, attacking users is the next step."Starbucks intitially fixed this vulnerability by disconnecting the newsletter sign up function. Later I found out this was a case of email link poisoning except via the referrer attribute instead of the host. Example with host header here <a href="https://hackerone.com/reports/182670">https://hackerone.com/reports/182670</a>. The moral of the story is to never give up no matter how many people are also hunting on the same bug bounty target. Think outside of the box, be creative, and have fun. My Hackerone report of this bug <a href="https://hackerone.com/reports/229498">https://hackerone.com/reports/229498</a>
+</article>
+<p>&nbsp</p>
+<p>Result:</p>
+<article>
+Cache-Control: private<br>
+Content-Type: application/json; charset=utf-8<br>
+Server: Microsoft-IIS/7.5<br>
+p3p: CP="CAO PSA OUR"<br>
+Set-Cookie: ASP.NET_SessionId=███████; domain=.starbucks.com; path=/; secure; HttpOnly<br>
+x-newrelic-app-data: <br>
+X-Powered-By: ASP.NET<br>
+x-frame-options: SAMEORIGIN<br>
+Date: Thu, 18 May 2017 02:53:52 GMT<br>
+Content-Length: 457<br>
+Via: 1.1 sjc1-10<br>
+newsletter_signup=pocheaderinjection@gmail.com&newsletter_placement=footer<br>
+</article>
+<p>&nbsp</p>
+<p>I recieved a 200 OK response from the server. The email I recieved from Starbucks validated the vulnerability via the screenshot below.</p>
+  <img src="/images/starbucks-links-replaced.png" width="80%"> 
+  <p>This vulnerability could send the replaced links in the email content to any recipient of the Starbucks mail server.<h3>Conclusion</h3><p>The bounty from this bug was $150 and at the time I was very happy with that. However after doing bug bounties for almost 2 years, I think this vulnerability would have cost Starbucks a significant amount in damage control if exploited. One of the easiest ways to esculate privileges is to phish an employee on the internal network. Quoted from The Hacker Playbook 3 "We all know that spear phishing is still one of the more successful avenues of attack. If we don't have any vulnerabilities from the outside, attacking users is the next step."Starbucks intitially fixed this vulnerability by disconnecting the newsletter sign up function. Later I found out this was a case of email link poisoning except via the referrer attribute instead of the host. Example with host header here <a href="https://hackerone.com/reports/182670">https://hackerone.com/reports/182670</a>. The moral of the story is to never give up no matter how many people are also hunting on the same bug bounty target. Think outside of the box, be creative, and have fun. My Hackerone report of this bug <a href="https://hackerone.com/reports/229498">https://hackerone.com/reports/229498</a></p>
 </div>
+</section>
+<footer>
+          <fieldset>
+            <legend>Newsletter Signup</legend>
+            <div class="clearfix">
+              <div class="alignsubscribe">
+                <br>
+                <form action="mailto:b3nac.sec@gmail.com" method="get">
+                  <label for="email">Subscribe to stay up to date with my latest blog posts!</label>
+                  <input id="email" name="email" type="email" />
+                  <button type="submit">Subscribe</button>
+                </form>
+              </div>
+              <div class="alignsubscribe" id="linkcolumn">
+                <a href="../privacypolicy.html">Privacy Policy</a>
+                <a href="../sitemap.xml">Site Map</a>
+                <a href="#main">Back to Top</a>
+                <a href="https://www.buymeacoffee.com/9MAkIor2q" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+                <p>Copyright © 2020 B3nac</p>
+              </div>
+              <div class="alignsocial">
+                <a href="https://bugcrowd.com/B3nac_Sec"><img src="../images/bugcrowd.png"></a>
+                <a href="https://github.com/B3nac"><img src="../images/github.png" alt="Github"></a>
+                <a href="https://twitter.com/b3nac"><img src="../images/twitter.png"></a>
+                <a href="https://www.linkedin.com/in/kyle-benac"><img src="../images/linkedin.ico" alt="Linkedin"></a>
+                <a href="https://hackerone.com/b3nac"><img src="../images/h1.png"></a>
+              </div>
+            </div>
+          </fieldset>
+        </footer>
 </html>
