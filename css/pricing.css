@@ -40,3 +40,10 @@ header {
   padding: 14px 16px;
   text-decoration: none;
 }
+
+footer {
+  background-color: @footer-background-color;
+  padding: 1px;
+  text-align: center;
+  color: white;
+}
