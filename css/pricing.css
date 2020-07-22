@@ -7,8 +7,16 @@ html {
   }
 }
 
+header {
+  background-color: @header-background-color;
+  padding: 30px;
+  text-align: left;
+  font-size: 35px;
+  color: white;
+}
+
 .container {
-  max-width: 960px;
+  max-width: 1000px;
 }
 
 .pricing-header {
