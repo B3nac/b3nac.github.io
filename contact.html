@@ -44,30 +44,6 @@
 			<section>
 				<h4>Contact</h4>
 				<h3>Please send me an email for any inquiries!</h3>
-				<fieldset>
-				<legend tabindex="1">Contact Form</legend>
-				<form action="mailto:b3nac.sec@gmail.com" id="contactform">
-					Name *<br>
-					<input type="text" name="Name" value="" tabindex="2" required>
-					<br>
-					<br>
-					Email Address *<br>
-					<input type="text" name="email" id="emailfield" value="" tabindex="3" required>
-					<br>
-					<p>Questions/Comments</p>
-					<textarea rows="4" cols="40" name="comments" tabindex="4" form="contactform">
-					Enter any questions and comments here.
-					</textarea>
-					<br>
-					<br>
-					Newsletter Signup:<br><br>
-					<label for="newsletter">Check this box if you want feature updates.</label>
-					<input type="checkbox" name="Newsletter" value="Newsletter" id="newsletter" tabindex="5"><br>
-					<br>
-					<br>
-					<input type="submit" value="Submit" tabindex="6" onclick="javascript:verifyEmailFormat();">
-					</form>
-				</fieldset>
 			</section>
 			<div class="alignsubscribe">
 		    <p>
@@ -76,20 +52,6 @@
 		    </p>
 	</div>
 	</div>
-	<script>
-
-		function verifyEmailFormat() {
-
-			var email = document.getElementById('emailfield');
-			var format = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-
-			if (!format.test(emailfield.value)) {
-				alert('Please enter a valid email address!');
-				emailfield.focus;
-				return false;
-			}
-		}
-	</script>
 	<footer>
 		<fieldset>
 			<legend>Newsletter Signup</legend>
@@ -114,12 +76,11 @@
 	<p>Copyright © 2020 B3nac</p>
 </div>
 <div class="alignsocial">
-  <a href="https://bugcrowd.com/B3nac_Sec"><img src="/images/bugcrowd.png"></a>
   <a href="https://github.com/B3nac"><img src="images/github.png" alt="Github"></a>
   <a href="https://twitter.com/b3nac"><img src="/images/twitter.png"></a>
   <a href="https://www.youtube.com/B3nacSec"><img src="/images/youtube.png"></a>
   <a href="https://www.linkedin.com/in/kyle-benac"><img src="images/linkedin.ico" alt="Linkedin"></a>
-  <a href="https://hackerone.com/b3nac"><img src="/images/h1.png"></a>
+  <a href="https://bugcrowd.com/B3nac_Sec"><img src="/images/bugcrowd.png"></a>
   <iframe src="https://github.com/sponsors/B3nac/button" title="Sponsor B3nac" height="35" width="116" style="border: 0;"></iframe>
 </div>
 </div>
